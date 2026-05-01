@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Claudometer tray
+Comment=Live indicator of Claude plan usage in the panel
+Exec=@PYTHON@ @REPO@/tray.py
+Icon=@REPO@/icons/claudometer-green.svg
+Terminal=false
+X-GNOME-Autostart-enabled=true
+NoDisplay=false
+Categories=Utility;

@@ -1,0 +1,10 @@
+[Unit]
+Description=Claude plan usage monitor (one poll)
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=oneshot
+ExecStart=@PYTHON@ @REPO@/monitor.py
+Environment=DISPLAY=:0
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/%U/bus

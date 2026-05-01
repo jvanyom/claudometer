@@ -1,0 +1,11 @@
+[Unit]
+Description=Poll Claude plan usage every @INTERVAL@ minute(s)
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=@INTERVAL@min
+Persistent=true
+Unit=claudometer.service
+
+[Install]
+WantedBy=timers.target
