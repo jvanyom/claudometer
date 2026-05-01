@@ -1,5 +1,7 @@
 # Claudometer
 
+![Tray indicator showing 5h 37% (4h35m) · W 38% (3d17h)](docs/tray.png)
+
 Desktop notifications and a panel indicator for your **Claude.ai plan usage**
 on Linux. Polls the same authenticated endpoint that the Claude.ai web UI
 uses (`https://claude.ai/api/organizations/<org>/usage`) on a configurable
@@ -9,7 +11,7 @@ schedule, then:
   quota falls below a threshold, or when current consumption rate would
   exhaust the window before the next reset;
 - shows a colored dot + live percentage label in your system tray
-  (e.g. `5h 16% (1h22m) · W 47% (4d2h)`).
+  (see screenshot above — 5h and weekly windows with countdown to each reset).
 
 Two stdlib-only Python scripts. No pip, no venv, no daemon framework.
 
