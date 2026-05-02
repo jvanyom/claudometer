@@ -606,6 +606,11 @@ def main() -> int:
     cfg = Config.load(args.config)
     state = load_state()
 
+    # Prune stale history before any network call so that error-path
+    # save_state() calls don't preserve entries older than the retention window.
+    _cutoff = time.time() - cfg.history_retention_min * 60
+    state["history"] = [h for h in state.get("history", []) if h["ts"] >= _cutoff]
+
     if not cfg.cookie_file.exists():
         maybe_auth_error_notify(
             state, cfg, f"Cookie file missing at {cfg.cookie_file}. Run install.sh."

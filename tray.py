@@ -15,6 +15,8 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+import time
+
 import gi
 
 # Prefer Ayatana (current Ubuntu); fall back to legacy AppIndicator3.
@@ -48,6 +50,7 @@ LAST_RESPONSE_PATH = STATE_DIR / "last_response.json"
 MONITOR_SCRIPT = REPO_DIR / "monitor.py"
 
 REFRESH_SEC = 60
+STALE_SEC = 30 * 60  # readings older than this are shown as grey/stale
 IDLE_RESET = "idle"
 
 
@@ -191,6 +194,19 @@ class Tray:
             return
 
         latest = latest_per_window(state)
+        last_ts = max((h["ts"] for h in state.get("history", [])), default=0)
+
+        if last_ts and time.time() - last_ts > STALE_SEC:
+            age_min = int((time.time() - last_ts) / 60)
+            self.indicator.set_label("?", "stale")
+            self.indicator.set_icon_full(str(ICONS["grey"]), "stale data")
+            for i, window in enumerate(self.windows):
+                self.detail_items[i].set_label(
+                    f"{pretty_window(window)}: stale ({age_min}m old — refresh to update)"
+                )
+            self.updated_item.set_label(f"Last updated: {age_min}m ago (stale)")
+            return
+
         worst_remaining = 100.0
         label_segments: list[str] = []
 
@@ -219,7 +235,6 @@ class Tray:
             self.indicator.set_label("?", "no readings")
             self.indicator.set_icon_full(str(ICONS["grey"]), "no readings")
 
-        last_ts = max((h["ts"] for h in state.get("history", [])), default=0)
         if last_ts:
             local = datetime.fromtimestamp(last_ts).astimezone().strftime("%H:%M:%S")
             self.updated_item.set_label(f"Last updated: {local}")
